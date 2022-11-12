@@ -14,9 +14,12 @@ GROUP BY a.name
 ORDER BY avg(t.duration);
 
 SELECT a.name FROM artists AS a
-JOIN artistsalbums AS aa ON aa.artist_id = a.artist_id 
-JOIN albums AS am ON am.album_id = aa.album_id 
-WHERE NOT am.date >= '01.01.2020' AND am.date <= '31.12.2020';
+WHERE a.name NOT IN (
+SELECT DISTINCT a.name FROM artists AS a
+JOIN artistsalbums AS aa ON a.artist_id = aa.artist_id 
+JOIN albums AS al ON al.album_id  = aa.album_id 
+WHERE al.date >= '01.01.2020' AND al.date <= '12.12.2020'
+);
 
 SELECT DISTINCT c.name FROM compilation AS c
 JOIN trackscompilations AS tc ON c.comp_id = tc.comp_id 
