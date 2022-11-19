@@ -78,16 +78,13 @@ def delete_client(cur, client_id):
     print('Данные удалены!')
 
 
-def find_client(cur, name=None, surname=None, email=None, phone=None):
+def find_client(cur, **values):
     """This function print client info"""
-
-    cur.execute("""SELECT * FROM clients as c 
+    for key, value in values.items():
+        cur.execute(f"""SELECT * FROM clients as c 
                 LEFT JOIN phones as p ON c.client_id = p.client_id 
-                WHERE (name=%s OR name='None') 
-                    AND (surname=%s OR surname='None') 
-                    AND (email=%s OR email='None') 
-                    AND (phone=%s OR phone='None');""", (name, surname, email, phone))
-
+                WHERE {key} = '{value}'
+        """)
     print(cur.fetchone())
 
 
@@ -98,10 +95,10 @@ if __name__ == '__main__':
         create_tables(cur)
         add_client(conn, 'Oleg', 'Petrov', 'petrov@mail.ru')
         add_client(conn, 'Vlad', 'Namchin', 'namchin@mail.ru')
-        add_phone(conn,'+79153336569', '1')
+        add_phone(conn, '+79153336569', '1')
         update_client(conn, 'Ivan', 'Losin', 'losin@mail.ru', '2')
         delete_phone(conn, '1')
         delete_client(conn, '1')
-        find_client(cur, 'Ivan')
+        find_client(cur, name='Ivan')
 
     conn.close()
