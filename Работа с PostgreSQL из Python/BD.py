@@ -44,14 +44,56 @@ def add_phone(cur, phone, id):
     print('Данные добавлены!')
 
 
-def update_client(cur, name, surname, email, id):
+def update_client(cur, name=None, surname=None, email=None, id=None):
     """This function changes client info"""
+    if name is not None and surname is not None and email is not None:
+        cur.execute("""
+            UPDATE clients
+            SET name = %s, surname = %s, email = %s
+            WHERE client_id = %s;
+            """, (name, surname, email, id))
 
-    cur.execute("""
-        UPDATE clients
-        SET name = %s, surname = %s, email = %s
-        WHERE client_id = %s;        
-        """, (name, surname, email, id))
+    elif name is not None and surname is not None and email is None:
+        cur.execute("""
+            UPDATE clients
+            SET name = %s, surname = %s
+            WHERE client_id = %s;
+            """, (name, surname, id))
+
+    elif name is not None and surname is None and email is not None:
+        cur.execute("""
+            UPDATE clients
+            SET name = %s, email = %s
+            WHERE client_id = %s;
+            """, (name, email, id))
+
+    elif name is None and surname is not None and email is not None:
+        cur.execute("""
+            UPDATE clients
+            SET surname = %s, email = %s
+            WHERE client_id = %s;
+            """, (surname, email, id))
+
+    elif name is None and surname is None and email is not None:
+        cur.execute("""
+            UPDATE clients
+            SET email = %s
+            WHERE client_id = %s;
+            """, (email, id))
+
+    elif name is None and surname is not None and email is None:
+        cur.execute("""
+                UPDATE clients
+                SET surname = %s
+                WHERE client_id = %s;
+                """, (surname, id))
+
+    elif name is not None and surname is None and email is None:
+        cur.execute("""
+                UPDATE clients
+                SET name = %s
+                WHERE client_id = %s;
+                """, (name, id))
 
     print('Данные успешно обновлены!')
 
@@ -93,12 +135,13 @@ if __name__ == '__main__':
                             password=input('Введите пароль: '))
     with conn.cursor() as cur:
         create_tables(cur)
-        add_client(conn, 'Oleg', 'Petrov', 'petrov@mail.ru')
-        add_client(conn, 'Vlad', 'Namchin', 'namchin@mail.ru')
-        add_phone(conn, '+79153336569', '1')
-        update_client(conn, 'Ivan', 'Losin', 'losin@mail.ru', '2')
-        delete_phone(conn, '1')
-        delete_client(conn, '1')
+        add_client(cur, 'Oleg', 'Petrov', 'petrov@mail.ru')
+        add_client(cur, 'Vlad', 'Namchin', 'namchin@mail.ru')
+        add_phone(cur, '+79153336569', '1')
+        update_client(cur, 'Luka', id='2')
+        delete_phone(cur, '1')
+        delete_client(cur, '1')
         find_client(cur, name='Ivan')
+        conn.commit()
 
     conn.close()
