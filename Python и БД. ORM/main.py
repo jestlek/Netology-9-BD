@@ -3,9 +3,9 @@ from tables import create_tables, Publisher, Sale, Shop, Book, Stock
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
-log = 'postgres'
-pas = 'zapil43'
-base = 'orm'
+log = 'sss'
+pas = 'sss'
+base = 'sss'
 
 DSN = f'postgresql://{log}:{pas}@localhost:5432/{base}'
 engine = sqlalchemy.create_engine(DSN)
@@ -34,8 +34,7 @@ for author in session.query(Publisher):
 
 num_author = int(input('Введите номер автора: '))
 
-for el in session.query(Book.title, Shop.name, Sale.price, Sale.count, Sale.date_sale). \
-        join(Publisher).join(Stock).join(Shop).join(Sale).filter(Publisher.id == num_author):
+for el in session.query(Book.title, Shop.name, Sale.price, Sale.count, Sale.date_sale).join(Publisher).join(Stock).join(Shop).join(Sale).filter(Publisher.id == num_author):
 
     print(f' {el.title} | {el.name} | {el.price} | {el.date_sale}')
 
